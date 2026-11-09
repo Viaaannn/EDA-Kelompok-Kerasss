@@ -1,0 +1,2 @@
+nama_kolom,deskripsi,tipe_data,skala_pengukuran,satuan,contoh_nilai,nilai_kosong,sumber,kategori_data_pribadi,tindakan_penanganan,catatan
+(isi nama kolom persis seperti di file),(satu kalimat: kolom ini merekam apa),int / float / string / date / bool,nominal / ordinal / interval / rasio,"(rupiah, tahun, %, — )",(satu contoh nilai nyata),"(ya/tidak, berapa banyak)",(nama file atau tabel asal),pengenal langsung / quasi-identifier / data spesifik / bukan data pribadi,hapus / hash / generalisasi / pertahankan,(hal yang perlu diketahui pembaca)
