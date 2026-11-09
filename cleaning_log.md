@@ -1,22 +1,26 @@
 # Cleaning Log
 
-Dataset: transaksi_koperasi_2025.csv  
-Baris mentah: 1543 -> baris bersih: 1493  
+Dataset: `laptopPrice.csv` · Baris mentah: 823 → baris bersih: 802
+Data asli di `data/raw/` tidak diubah; hasil di `data/processed/laptop_bersih.csv`. Kode: `notebooks/02_cleaning.ipynb`.
 
 | # | Langkah | Baris terdampak | Alasan |
 |---|---|---|---|
-| 1 | Konversi total_bayar ke angka | 250 | Buang "Rp" dan pemisah ribuan agar kolom dapat dihitung |
-| 2 | Konversi tanggal per format | 1543 | format="mixed" dengan dayfirst merusak 483 baris berformat ISO tanpa memunculkan galat |
-| 3 | Buang spasi awal dan akhir kolom teks | 160 | Spasi tersembunyi memecah groupby dan melambungkan nunique |
-| 4 | Placeholder teks menjadi kosong | 19 | N/A, -, null, dan teks kosong bukan nilai sungguhan |
-| 5 | Placeholder -999 pada rating menjadi kosong | 49 | Angka -999 merusak rata-rata tanpa pernah terdeteksi isna() |
-| 6 | Seragamkan kategori | 2 | Huruf dan spasi oleh kode; sinonim dan salah ketik diputuskan manual lalu dicatat di peta |
-| 7 | Hapus duplikat persis | 39 | Seluruh kolom identik; satu baris disimpan |
-| 8 | Satukan duplikat menurut id_transaksi | 15 | Satu transaksi hanya boleh satu baris; dipilih baris yang catatannya terisi |
-| 9 | Buang baris tanpa id_transaksi | 1 | Kunci utama kosong tidak dapat ditelusuri kembali ke sumber |
-| 10 | jumlah <= 0 menjadi kosong | 29 | Belum jelas retur atau salah input; barisnya masih berguna untuk kolom lain |
-| 11 | Diskon di luar 0-100 menjadi kosong | 9 | Nilai mustahil; menunggu konfirmasi pengurus |
-| 12 | Tandai total yang tidak cocok | 50 | Ditandai, tidak ditimpa, karena belum diketahui kolom mana yang keliru |
-| 13 | saldo_simpanan dibiarkan kosong | 156 | Diduga MNAR; imputasi apa pun akan membuat rata-rata saldo tampak lebih kecil daripada kenyataan |
-| 14 | Tandai keberlakuan berat_kg | 290 | Kosong karena tidak berlaku, bukan karena hilang; diberi kolom penanda, tidak diisi |
-| 15 | Tandai keberadaan catatan kasir | 1004 | Kosong berarti kasir tidak menulis apa pun; dijadikan penanda biner |
+| 1 | Hapus duplikat persis | 21 | Seluruh 19 kolom identik; satu salinan disimpan. Dilakukan pertama agar hitungan langkah lain tidak terdistorsi |
+| 2 | Konversi `ram_gb`, `ssd`, `hdd`, `graphic_card_gb` dari teks `"8 GB"` ke angka | 802 | Teks bersatuan tidak dapat dihitung; satuan GB dipindah ke nama kolom |
+| 3 | Konversi `warranty` ke `garansi_tahun` | 802 | `No warranty` = 0 tahun; pemetaan eksplisit agar nilai tak dikenal memicu galat, bukan lolos diam-diam |
+| 4 | Konversi `rating` ke angka 1–5 | 802 | `"4 stars"` tidak dapat dihitung rata-ratanya |
+| 5 | `Yes`/`No` menjadi boolean; nama kolom diseragamkan | 802 | Memudahkan agregasi dan konsisten dengan kolom lain |
+| 6 | Seragamkan penulisan `brand` (acer, DELL, APPLE) | 223 | Hanya beda huruf besar/kecil; ASUS, HP, MSI dibiarkan karena singkatan |
+| 7 | Rating pada baris tanpa penilai menjadi kosong | 243 | Seluruh baris dengan `Number of Ratings` = 0 berisi `3 stars` (nilai bawaan, bukan penilaian nyata); rata-rata rating naik dari 3,56 ke 3,82 setelah dikoreksi |
+| 8 | `processor_gnrtn` = `Not Available` menjadi kosong + kolom `generasi_tersedia` | 224 | Kosong terstruktur (hampir seluruhnya Ryzen, Celeron, Pentium), bukan acak; ditandai, tidak diisi |
+| 9 | Tandai OS 32-bit dengan RAM >= 8 GB (`flag_32bit_ram_besar`) | 63 | OS 32-bit tidak dapat memakai RAM sebesar itu, tetapi belum diketahui kolom mana yang keliru; ditandai, tidak ditimpa |
+| 10 | Tandai outlier harga (`harga_outlier_iqr`) | 49 | Didominasi laptop berspesifikasi tinggi (RAM 16 GB pada 38 dari 49 baris, Core i7/i9, Apple M1), jadi wajar; dibuang akan menghapus segmen premium |
+
+## Diperiksa dan sengaja tidak diubah
+- `ssd`, `hdd`, `graphic_card_gb` bernilai `0 GB`: artinya komponen itu tidak ada, bukan data hilang, sehingga tidak dijadikan kosong.
+- Tidak ada nilai kosong (NaN) pada data mentah; semua kekosongan di data bersih berasal dari langkah 7 dan 8.
+- `Number of Reviews` tidak pernah melebihi `Number of Ratings`, dan semua harga > 0.
+
+## Catatan keterbatasan
+- Data tidak memuat nama model, sehingga dua baris berbeda yang kebetulan identik di semua kolom tidak dapat dibedakan dari duplikat sungguhan (langkah 1).
+- Mata uang pada kolom harga tidak dinyatakan di berkas.

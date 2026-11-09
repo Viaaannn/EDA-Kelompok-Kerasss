@@ -1,0 +1,8 @@
+dimensi,kolom,masalah,jumlah,keparahan,rencana,persen
+Keunikan,seluruh kolom,Baris duplikat persis,21,Sedang,"Hapus, simpan satu",2.55
+Kelengkapan,processor_gnrtn,Placeholder 'Not Available' (terstruktur),225,Sedang,Jadikan kosong + kolom penanda,27.34
+Validitas,rating,'3 stars' bawaan pada baris tanpa penilai,256,Tinggi,Jadikan kosong,31.11
+Validitas,os_bit & ram_gb,OS 32-bit dengan RAM >= 8 GB,63,Rendah,"Tandai, jangan ditimpa",7.65
+Konsistensi,brand,Huruf besar/kecil tidak seragam,230,Rendah,Seragamkan,27.95
+Tipe Data,"ram_gb, ssd, hdd, graphic_card_gb, warranty, rating",Angka tersimpan sebagai teks bersatuan,823,Tinggi,Konversi ke angka,100.0
+Akurasi,Price,Outlier harga (IQR),49,Rendah,"Tandai, jangan dibuang",5.95
